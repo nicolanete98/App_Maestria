@@ -1,1 +1,171 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Medellín Emprende Mujer | Modelo territorial</title><link rel="stylesheet" href="styles.css"></head><body><header><div class="wrap top"><div><span class="eyebrow">MODELO TERRITORIAL · 2016–2025</span><h1>Medellín <em>Emprende Mujer</em></h1><p>Probabilidad de rentabilidad, semáforos y escenarios a 5, 10 y 15 años</p></div><span class="pill">Simulador · Sin datos oficiales cargados</span></div></header><main class="wrap"><section class="notice"><strong>Integridad estadística:</strong> los valores iniciales son demostrativos. El porcentaje observado se calcula a partir de tus registros; el índice exploratorio y las proyecciones son escenarios hipotéticos, no probabilidades entrenadas ni cifras verificadas de Medellín.</section><div class="layout"><section class="panel"><h2>1. Datos de la población</h2><p class="muted">Mujeres de 18 años o más, residentes en Medellín, con emprendimientos activos por al menos 12 meses.</p><label>Comuna o corregimiento<select id="territory"></select></label><label>Sector económico<select id="sector"><option>Todos los sectores</option><option>Comercio</option><option>Servicios</option><option>Turismo y gastronomía</option><option>Industria</option><option>Tecnología</option><option>Otro</option></select></label><div class="two"><label>Emprendimientos evaluados<input id="n" type="number" min="0" step="1" value="100"></label><label>Con rentabilidad positiva<input id="success" type="number" min="0" step="1" value="55"></label></div><p id="error" class="error" role="alert"></p><h2>2. Condiciones del entorno</h2><p class="muted">Indicadores hipotéticos de 0 a 100; modificarlos no altera la tasa observada.</p><div id="sliders"></div><h2>3. Supuestos de proyección</h2><label>Cambio anual central (puntos porcentuales)<input id="change" type="number" step="0.5" min="-10" max="10" value="1"></label><label>Escenario<select id="scenario"><option value="0">Central</option><option value="1.5">Optimista (+1,5 pp/año)</option><option value="-1.5">Pesimista (−1,5 pp/año)</option></select></label><div class="actions"><button id="reset" class="secondary">Restablecer</button><button id="export">Exportar resultados CSV</button></div></section><section class="results"><div class="kpis"><article class="panel kpi"><small>Rentabilidad observada</small><strong id="observed">55,0 %</strong><span id="obsDesc">55 de 100 negocios</span></article><article class="panel kpi"><small>Índice exploratorio</small><strong id="index">—</strong><span id="indexDesc">No es probabilidad validada</span></article></div><article class="panel"><h2>Semáforo de rentabilidad observada</h2><div class="signal"><span id="dot" class="dot"></span><strong id="level">MEDIA</strong><span id="pct">55,0 %</span></div><div class="meter"><div id="meterFill"></div></div><div class="legend"><span>🔴 Baja: &lt;40 %</span><span>🟠 Media: 40–&lt;70 %</span><span>🟢 Alta: ≥70 %</span></div></article><article class="panel"><h2>Proyecciones ilustrativas</h2><p class="muted">Año base 2025. Cambio lineal supuesto; valores acotados entre 0 y 100 %.</p><div id="cards" class="cards"></div><div class="chart" id="chart" role="img" aria-label="Gráfico de proyecciones"></div></article><article class="panel"><h2>Factores territoriales</h2><div id="bars"></div><p class="footnote">Índice exploratorio = 40 % de tasa observada + 12 % de cada uno de cinco factores. Los pesos son arbitrarios y se muestran únicamente como herramienta pedagógica. Para probabilidades reales se necesita entrenar y validar un modelo con microdatos individuales.</p></article><article class="panel"><h2>Interpretación y próximos pasos</h2><p id="interpretation"></p><p class="muted">Los cambios en el territorio o sector son etiquetas de análisis: no modifican las estimaciones sin datos desagregados. Para un modelo predictivo real se requieren registros por mujer, año, territorio, formación, financiación, cuidados y rentabilidad, además de validación temporal y por territorio.</p></article></section></div></main><footer>Medellín Emprende Mujer · Herramienta académica de simulación · No sustituye una evaluación estadística.</footer><script src="app.js"></script></body></html>
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Prototipo interactivo del modelo de eficacia territorial para el emprendimiento femenino en Medellín, 2016-2025.">
+  <title>Territoria | Emprendimiento femenino en Medellín</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#inicio" aria-label="Territoria, inicio">
+        <span class="brand-mark">T</span>
+        <span><strong>territoria</strong><small>Inteligencia territorial</small></span>
+      </a>
+      <div class="workspace-label">MODELO DE INVESTIGACIÓN</div>
+      <nav class="nav" aria-label="Navegación principal">
+        <a class="nav-link active" href="#inicio"><span>◫</span> Resumen ejecutivo</a>
+        <a class="nav-link" href="#indicadores"><span>☷</span> Variables e indicadores</a>
+        <a class="nav-link" href="#simulador"><span>⌁</span> Simulador de escenarios</a>
+        <a class="nav-link" href="#territorio"><span>⌖</span> Análisis territorial</a>
+        <a class="nav-link" href="#datos-reales"><span>▤</span> Datos reales</a>
+        <a class="nav-link" href="#datos"><span>▤</span> Datos y metodología</a>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="project-chip"><span class="status-dot"></span><div><b>Proyecto de maestría</b><small>Medellín · 2016–2025</small></div></div>
+      </div>
+    </aside>
+
+    <main class="main-content" id="inicio">
+      <header class="topbar">
+        <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">☰</button>
+        <div class="breadcrumb">Investigación <span>/</span> <b>Eficacia territorial</b></div>
+        <div class="top-actions"><span class="period-pill">2016 — 2025</span><button class="btn btn-outline btn-sm" id="exportBtn">↓ Exportar escenario</button></div>
+      </header>
+
+      <section class="page-heading">
+        <div>
+          <div class="eyebrow"><span class="eyebrow-dot"></span> OBSERVATORIO DE EMPRENDIMIENTO FEMENINO</div>
+          <h1>Eficacia territorial</h1>
+          <p class="subtitle">Una lectura dinámica de las condiciones para la sostenibilidad del emprendimiento femenino en Medellín.</p>
+        </div>
+        <div class="heading-meta"><span class="meta-icon">⌖</span><div><b>Medellín, Colombia</b><small>16 comunas · 5 corregimientos</small></div></div>
+      </section>
+
+      <section class="section-block">
+        <div class="section-heading"><div><h2>Indicadores clave</h2><p id="analysisContext">Indicadores oficiales agregados disponibles. Las gráficas muestran el dato oficial de DANE EMICRON 2024 y el escenario editable.</p></div><span class="data-tag"><span class="tiny-dot"></span> <span id="yearLabel">Datos oficiales</span></span></div>
+        <div class="kpi-grid">
+          <article class="kpi-card">
+            <div class="kpi-top"><span>Probabilidad estimada</span><span class="kpi-icon purple">◉</span></div>
+            <div class="kpi-value" id="probabilityValue">—</div>
+            <div class="kpi-bottom"><span class="status-pill neutral" id="probabilityStatus">Sin validar</span><span class="kpi-note">escenario ilustrativo</span></div>
+            <div class="mini-track"><span id="probabilityBar" style="width:0%"></span></div>
+          </article>
+          <article class="kpi-card">
+            <div class="kpi-top"><span>Crédito promedio mínimo</span><span class="kpi-icon blue">$</span></div>
+            <div class="kpi-value"><span id="indexValue">—</span><small> COP</small></div>
+            <div class="kpi-bottom"><span class="status-pill neutral" id="indexStatus">Cálculo derivado</span><span class="kpi-note">por crédito reportado</span></div>
+            <div class="mini-track blue-track"><span id="indexBar" style="width:0%"></span></div>
+          </article>
+          <article class="kpi-card">
+            <div class="kpi-top"><span>Dimensiones evaluadas</span><span class="kpi-icon orange">▦</span></div>
+            <div class="kpi-value">8<small> dimensiones</small></div>
+            <div class="kpi-bottom"><span class="status-pill neutral">Propuesta inicial</span><span class="kpi-note">ponderaciones editables</span></div>
+            <div class="dimension-dots"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          </article>
+          <article class="kpi-card">
+            <div class="kpi-top"><span>Indicadores oficiales</span><span class="kpi-icon green">✓</span></div>
+            <div class="kpi-value" id="qualityValue">5<small> indicadores</small></div>
+            <div class="kpi-bottom"><span class="status-pill neutral">Datos agregados</span><span class="kpi-note">sin probabilidad validada</span></div>
+            <div class="mini-track green-track"><span style="width:0%"></span></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="charts-grid">
+        <article class="panel chart-panel">
+          <div class="panel-heading"><div><h3>Origen de los micronegocios en Medellín A.M.</h3><p>DANE · EMICRON 2024 · porcentaje</p></div><button class="icon-button" aria-label="Información sobre el gráfico" title="Dato oficial agregado para Medellín y su área metropolitana; no está desagregado por comuna ni exclusivamente para mujeres">ⓘ</button></div>
+          <div class="chart-wrap"><canvas id="trendChart" aria-label="Gráfico de evolución del índice" role="img"></canvas></div>
+          <div class="chart-footer"><span class="legend-dot purple-dot"></span> Distribución reportada por DANE <span class="chart-foot-note">Área metropolitana, no comuna</span></div>
+        </article>
+        <article class="panel chart-panel">
+          <div class="panel-heading"><div><h3>Perfil por dimensión</h3><p>Se actualiza al mover las variables del simulador</p></div><button class="icon-button" aria-label="Información sobre el gráfico" title="Puntuaciones ilustrativas">ⓘ</button></div>
+          <div class="radar-wrap"><canvas id="radarChart" aria-label="Gráfico radial de dimensiones" role="img"></canvas></div>
+          <div class="chart-footer"><span class="legend-dot blue-dot"></span> Puntuación normalizada <span class="chart-foot-note">0–100</span></div>
+        </article>
+      </section>
+
+      <section class="section-block" id="simulador">
+        <div class="section-heading"><div><h2>Simulador de escenarios</h2><p>Ajusta supuestos para observar el resultado matemático del prototipo.</p></div><span class="scenario-badge">Interactivo</span></div>
+        <div class="simulator-grid">
+          <article class="panel sliders-panel">
+            <div class="panel-heading"><div><h3>Variables de intervención</h3><p>Escala de 0 a 100</p></div><button class="btn btn-quiet btn-sm" id="resetSliders">Restablecer</button></div>
+            <div class="slider-list" id="sliderList">
+              <label class="slider-item"><span><b>Acceso a financiación</b><output id="financeOut">55</output></span><input type="range" id="finance" min="0" max="100" value="55"><small>Disponibilidad de crédito y capital.</small></label>
+              <label class="slider-item"><span><b>Formación empresarial</b><output id="trainingOut">60</output></span><input type="range" id="training" min="0" max="100" value="60"><small>Capacitación y asistencia técnica.</small></label>
+              <label class="slider-item"><span><b>Acceso a mercados</b><output id="marketsOut">58</output></span><input type="range" id="markets" min="0" max="100" value="58"><small>Clientes, canales digitales y redes.</small></label>
+              <label class="slider-item"><span><b>Infraestructura y conectividad</b><output id="infraOut">65</output></span><input type="range" id="infra" min="0" max="100" value="65"><small>Transporte, conectividad y servicios.</small></label>
+              <label class="slider-item"><span><b>Redes de apoyo</b><output id="networksOut">50</output><input type="range" id="networks" min="0" max="100" value="50"><small>Asociatividad y acompañamiento.</small></label>
+              <label class="slider-item"><span><b>Entorno seguro</b><output id="safetyOut">62</output><input type="range" id="safety" min="0" max="100" value="62"><small>Percepción de seguridad para operar.</small></label>
+              <label class="slider-item"><span><b>Conciliación de cuidados</b><output id="careOut">45</output><input type="range" id="care" min="0" max="100" value="45"><small>Disponibilidad de tiempo y apoyos.</small></label>
+              <label class="slider-item"><span><b>Innovación y digitalización</b><output id="innovationOut">57</output><input type="range" id="innovation" min="0" max="100" value="57"><small>Adopción tecnológica y mejoras.</small></label>
+            </div>
+            <div class="simulator-disclaimer">Los controles son supuestos de escenario, no mediciones observadas. El resultado no es una probabilidad validada.</div>
+          </article>
+          <article class="panel scenario-result">
+            <div class="panel-heading"><div><h3>Resultado del escenario</h3><p>Índice compuesto ilustrativo</p></div><span class="result-icon">↗</span></div>
+            <div class="result-ring" id="resultRing"><div><strong id="scenarioScore">—</strong><span>de 100 puntos</span></div></div>
+            <div class="result-status" id="scenarioStatus"><span class="status-light"></span><span>Escenario demostrativo</span></div>
+            <p class="result-explanation" id="scenarioExplanation">Modifica los controles para ver cómo cambia el índice compuesto.</p>
+            <div class="result-divider"></div>
+            <div class="contribution-title">Dimensiones del escenario</div>
+            <div class="contribution-list" id="contributionList"></div>
+            <button class="btn btn-primary btn-full" id="useScenario">Aplicar al análisis <span>→</span></button>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-block" id="territorio">
+        <div class="section-heading"><div><h2>Lectura territorial</h2><p>La desagregación por comuna está pendiente de integrar desde bases oficiales comparables.</p></div><span class="data-tag">Sin ranking inventado</span></div>
+        <article class="panel table-panel">
+          <div class="table-toolbar"><div><h3>Disponibilidad de datos por zona</h3><p>No se asigna puntuación sin indicadores oficiales comparables.</p></div><label class="search-box"><span>⌕</span><input id="territorySearch" placeholder="Buscar comuna o corregimiento" aria-label="Buscar territorio"></label></div>
+          <div class="table-scroll"><table><thead><tr><th>Territorio</th><th>Tipo</th><th>Índice real</th><th>Estado del dato</th><th>Fuente</th></tr></thead><tbody id="territoryTable"></tbody></table></div>
+          <div class="table-footer"><span id="tableCount">21 territorios</span><span>Los valores N/D no significan cero</span></div>
+        </article>
+      </section>
+
+      <section class="section-block" id="indicadores">
+        <div class="section-heading"><div><h2>Variables e indicadores</h2><p>Catálogo inicial para la recolección y validación de datos.</p></div><button class="btn btn-outline btn-sm" id="downloadTemplate">↓ Descargar plantilla CSV</button></div>
+        <article class="panel table-panel">
+          <div class="table-scroll"><table><thead><tr><th>Dimensión</th><th>Indicador propuesto</th><th>Fuente a consultar</th><th>Estado</th></tr></thead><tbody id="indicatorTable"></tbody></table></div>
+          <div class="table-footer"><span>8 dimensiones prioritarias</span><span>La fuente exacta debe verificarse por indicador y año</span></div>
+        </article>
+      </section>
+
+
+      <section class="section-block" id="datos-reales">
+        <div class="section-heading"><div><h2>Datos reales y cálculos derivados</h2><p>Los cálculos visibles se derivan de las cifras oficiales incorporadas; no son una probabilidad de supervivencia.</p></div><span class="data-tag">Fuentes oficiales</span></div>
+        <div class="real-data-grid">
+          <article class="panel real-data-card"><span class="real-data-year">DANE · EMICRON 2024</span><strong>93,4%</strong><h3>Creó el micronegocio por cuenta propia</h3><p>Porcentaje de micronegocios en Medellín A.M. reportados como creados por una sola persona.</p><a href="https://www.dane.gov.co/files/operaciones/EMICRON/pres-EMICRON-2024.pdf" target="_blank" rel="noopener">Consultar presentación DANE ↗</a></article>
+          <article class="panel real-data-card"><span class="real-data-year">DANE · EMICRON 2024</span><strong>6,4%</strong><h3>Creado junto con otras personas</h3><p>Porcentaje de micronegocios en Medellín A.M. creados por la persona encuestada y otras personas.</p><a href="https://www.dane.gov.co/files/operaciones/EMICRON/pres-EMICRON-2024.pdf" target="_blank" rel="noopener">Consultar presentación DANE ↗</a></article>
+          <article class="panel real-data-card"><span class="real-data-year">Alcaldía de Medellín · 2022</span><strong>22.746</strong><h3>Créditos a mujeres emprendedoras</h3><p>Créditos reportados entre el 1 de enero y el 31 de agosto de 2022, por más de $16.244 millones COP. Son créditos, no necesariamente mujeres únicas.</p><a href="https://www.medellin.gov.co/es/wp-content/uploads/2022/11/0-Informe-Final-de-Gestion-Anexo-170008523364.pdf" target="_blank" rel="noopener">Consultar informe de gestión ↗</a></article>
+          <article class="panel real-data-card"><span class="real-data-year">DANE · EMICRON 2025</span><strong>20,5%</strong><h3>Participación de Medellín A.M. en el valor agregado</h3><p>Participación de Medellín A.M. en el valor agregado de los micronegocios de las 24 ciudades y áreas metropolitanas. No es una cifra exclusiva de negocios liderados por mujeres.</p><a href="https://www.dane.gov.co/index.php/estadisticas-por-tema/mercado-laboral/micronegocios" target="_blank" rel="noopener">Consultar estadísticas EMICRON ↗</a></article>
+          <article class="panel real-data-card"><span class="real-data-year">DANE · EMICRON 2025</span><strong>17,7%</strong><h3>Participación en los ingresos nominales</h3><p>Participación de Medellín A.M. en los ingresos nominales de los micronegocios del conjunto de 24 ciudades y áreas metropolitanas. No es exclusiva de negocios de mujeres.</p><a href="https://www.dane.gov.co/index.php/estadisticas-por-tema/mercado-laboral/micronegocios" target="_blank" rel="noopener">Consultar estadísticas EMICRON ↗</a></article>
+        </div>
+        <article class="panel data-caveat"><h3>Cálculos realizados con los datos oficiales</h3><p><b>Crédito promedio mínimo:</b> más de $16.244.000.000 COP ÷ 22.746 créditos = más de <strong id="averageCreditCalc">$714.148 COP por crédito</strong>. Es un promedio aproximado porque el informe indica “más de” $16.244 millones.</p><p><b>Relación entre formas de creación:</b> 93,4% ÷ 6,4% = <strong id="creationRatio">14,6 veces</strong>. En la distribución reportada, la categoría “lo creó una sola persona” es aproximadamente 14,6 veces la categoría “lo creó junto con otras personas”. Son micronegocios de Medellín A.M., no solo emprendimientos femeninos.</p><h3>Cómo interpretar estas cifras</h3><p>Las cifras de EMICRON son para Medellín y su área metropolitana, no para cada comuna o corregimiento, y no representan únicamente emprendimientos de mujeres. El dato de créditos es un resultado administrativo de 2022. Por tanto, se incorporan como contexto verificable y no se convierten artificialmente en una probabilidad de éxito.</p><p>La Alcaldía dispone de tableros de estructura empresarial por comuna y estadísticas territoriales, pero se debe descargar y cruzar cada base con sexo de la persona propietaria, antigüedad del negocio y resultado de supervivencia antes de construir el modelo probabilístico.</p><a href="https://www.medellin.gov.co/es/secretaria-desarrollo-economico/observatorio-de-desarrollo-economico/visores-de-datos/mapas/mapa-de-estructura-empresarial/" target="_blank" rel="noopener">Mapa de estructura empresarial por comuna ↗</a> · <a href="https://www.medellin.gov.co/es/centro-documental/cifras-y-estadisticas-por-comuna-y-corregimiento/" target="_blank" rel="noopener">Cifras por comuna y corregimiento ↗</a></article>
+      </section>
+
+      <section class="section-block" id="datos">
+        <div class="section-heading"><div><h2>Datos y metodología</h2><p>Importa registros oficiales para análisis adicional; el tablero no inventa valores territoriales ausentes.</p></div><span class="data-tag">CSV</span></div>
+        <div class="data-grid">
+          <article class="panel upload-panel">
+            <div class="upload-icon">↑</div><h3>Importar datos oficiales</h3><p>Carga un CSV con columnas <code>year</code>, <code>territory</code>, <code>indicator</code>, <code>value</code> y <code>source</code>. Los datos importados se utilizarán para mostrar registros disponibles.</p>
+            <label class="btn btn-outline upload-label" for="csvFile">Seleccionar archivo CSV</label><input type="file" id="csvFile" accept=".csv,text/csv" hidden>
+            <div id="uploadMessage" class="upload-message" aria-live="polite">No se ha importado ningún archivo.</div>
+          </article>
+          <article class="panel methodology-panel">
+            <h3>Ficha del modelo</h3>
+            <dl><div><dt>Unidad territorial</dt><dd>16 comunas + 5 corregimientos</dd></div><div><dt>Periodo histórico</dt><dd>2016–2025</dd></div><div><dt>Población objetivo</dt><dd>Mujeres de 18 años o más, residentes en Medellín, con emprendimiento vigente durante al menos 12 meses.</dd></div><div><dt>Resultado principal</dt><dd>Supervivencia empresarial a 12, 24 y 36 meses.</dd></div><div><dt>Modelo previsto</dt><dd>Índice compuesto + regresión logística o análisis de supervivencia, si hay microdatos suficientes.</dd></div><div><dt>Validación</dt><dd>Evaluación temporal, calibración y análisis de incertidumbre.</dd></div></dl>
+            <div class="method-warning"><b>Importante</b><span>Una puntuación ponderada no equivale a una probabilidad estadística. Para mostrar probabilidades reales, el modelo debe entrenarse y validarse con observaciones empresariales.</span></div>
+          </article>
+        </div>
+      </section>
+      <footer class="footer"><span>Territoria · Prototipo académico</span><span>Fuentes sugeridas: DANE · MEData · SICGEM · Planeación Medellín</span><a href="#inicio">Volver arriba ↑</a></footer>
+    </main>
+  </div>
+</body>
+</html>
